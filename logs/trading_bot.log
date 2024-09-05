@@ -1,0 +1,212 @@
+2024-09-01 15:06:45 - INFO - Preço atual do BTCBRL: R$329871.0
+2024-09-01 15:06:46 - INFO - Saldo disponível: R$0.0
+2024-09-01 15:06:46 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 15:06:46 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:07:24 - INFO - Preço simulado do BTCBRL: R$327000.0
+2024-09-01 15:07:24 - INFO - Saldo simulado disponível: R$1000.0
+2024-09-01 15:07:24 - INFO - Valor da compra: R$500.0
+2024-09-01 15:07:24 - INFO - Quantidade de BTC a ser comprada: 0.0015290519877675841
+2024-09-01 15:07:24 - INFO - Preço alvo calculado: 379320.0
+2024-09-01 15:07:24 - INFO - Níveis de Fibonacci: [249828.0, 202086.0, 163500.0, 124914.0, 77172.0]
+2024-09-01 15:07:24 - INFO - Comparando preço atual (327000.0) com nível de Fibonacci mais baixo (249828.0)
+2024-09-01 15:07:24 - INFO - Comparando preço atual (327000.0) com preço de compra parametrizado (327000.0)
+2024-09-01 15:07:24 - INFO - Preço atual (327000.0) atende ao critério de Fibonacci (249828.0) e está abaixo do preço parametrizado (327000.0)
+2024-09-01 15:07:24 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:07:24 - INFO - Modo de simulação ativado. Compra simulada: Comprar Bitcoin.
+2024-09-01 15:07:24 - INFO - Ordem de compra: ID 14, Data: 2024-09-01 15:07:24, Quantidade: 0.0015290519877675841, Valor de Compra: 500.0, Preço de Compra: 327000.0, Preço alvo: 379320.0
+2024-09-01 15:07:24 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:30:03 - INFO - Preço simulado do BTCBRL: R$327000.0
+2024-09-01 15:30:03 - INFO - Saldo simulado disponível: R$1000.0
+2024-09-01 15:30:03 - INFO - Valor da compra: R$500.0
+2024-09-01 15:30:03 - INFO - Quantidade de BTC a ser comprada: 0.0015290519877675841
+2024-09-01 15:30:03 - INFO - Preço alvo calculado: 379320.0
+2024-09-01 15:30:03 - INFO - Níveis de Fibonacci: [249828.0, 202086.0, 163500.0, 124914.0, 77172.0]
+2024-09-01 15:30:03 - INFO - Comparando preço atual (327000.0) com nível de Fibonacci mais baixo (249828.0)
+2024-09-01 15:30:03 - INFO - Comparando preço atual (327000.0) com preço da ordem de compra (327000.0)
+2024-09-01 15:30:03 - INFO - Preço atual (327000.0) atende ao critério de Fibonacci (249828.0) e está abaixo da ordem de compra (327000.0)
+2024-09-01 15:30:03 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:30:03 - INFO - Modo de simulação ativado. Comprando Bitcoin...
+2024-09-01 15:30:03 - INFO - Ordem de compra: ID 15, Data: 2024-09-01 15:30:03, Quantidade: 0.0015290519877675841, Valor de Compra: 500.0, Preço de Compra: 327000.0, Preço alvo: 379320.0
+2024-09-01 15:30:03 - INFO - [SIMULATED BUY] Compra simulada registrada: Quantidade: 0.0015290519877675841 BTC a R$327000.0
+2024-09-01 15:30:03 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:30:50 - INFO - Preço simulado do BTCBRL: R$387000.0
+2024-09-01 15:30:50 - INFO - Saldo simulado disponível: R$1000.0
+2024-09-01 15:30:50 - INFO - Valor da compra: R$500.0
+2024-09-01 15:30:50 - INFO - Quantidade de BTC a ser comprada: 0.0012919896640826874
+2024-09-01 15:30:50 - INFO - Preço alvo calculado: 448919.99999999994
+2024-09-01 15:30:50 - INFO - Níveis de Fibonacci: [295668.0, 239166.0, 193500.0, 147834.0, 91332.0]
+2024-09-01 15:30:50 - INFO - Comparando preço atual (387000.0) com nível de Fibonacci mais baixo (295668.0)
+2024-09-01 15:30:50 - INFO - Comparando preço atual (387000.0) com preço da ordem de compra (327000.0)
+2024-09-01 15:30:50 - INFO - Preço atual (387000.0) não atende aos critérios de Fibonacci (295668.0) e/ou está acima da ordem de compra (327000.0)
+2024-09-01 15:30:50 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:30:50 - INFO - Modo de simulação ativado. Vendendo Bitcoin...
+2024-09-01 15:30:50 - INFO - [SIMULATED SELL] Ordem ID 14: Vendendo 0.0015290519877675841 BTC a 387000.0 BRL. Valor comprado: 500.00 BRL, Valor final: 591.74 BRL, Lucro: 91.74 BRL.
+2024-09-01 15:30:50 - INFO - [SIMULATED SELL] Ordem ID 15: Vendendo 0.0015290519877675841 BTC a 387000.0 BRL. Valor comprado: 500.00 BRL, Valor final: 591.74 BRL, Lucro: 91.74 BRL.
+2024-09-01 15:30:50 - INFO - Ordem atualizada: ID 14, Status: closed, Preço de venda: 387000.0, Valor final: 591.74, Lucro: 91.74
+2024-09-01 15:30:50 - INFO - Ordem atualizada: ID 15, Status: closed, Preço de venda: 387000.0, Valor final: 591.74, Lucro: 91.74
+2024-09-01 15:30:50 - INFO - Lucro total das ordens vendidas: R$183.49
+2024-09-01 15:30:50 - INFO - Ordens atualizadas: IDs [14, 15], Status: closed, Preço de venda: 387000.0
+2024-09-01 15:30:50 - INFO - Todas as ordens de venda simuladas foram fechadas.
+2024-09-01 15:30:50 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:33:53 - INFO - Preço simulado do BTCBRL: R$387000.0
+2024-09-01 15:33:53 - INFO - Saldo simulado disponível: R$0.0
+2024-09-01 15:33:53 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 15:33:53 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:38:48 - INFO - Preço simulado do BTCBRL: R$387000.0
+2024-09-01 15:38:48 - INFO - Saldo simulado disponível: R$0.0
+2024-09-01 15:38:48 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 15:38:48 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:38:51 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:38:55 - INFO - Programa retomado.
+2024-09-01 15:38:58 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:40:19 - INFO - Preço simulado do BTCBRL: R$387000.0
+2024-09-01 15:40:19 - INFO - Saldo simulado disponível: R$0.0
+2024-09-01 15:40:19 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 15:40:19 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:40:21 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:40:21 - INFO - Programa pausado. Pressione F1 paras sair.
+2024-09-01 15:40:28 - INFO - Programa retomado.
+2024-09-01 15:40:52 - INFO - Preço simulado do BTCBRL: R$387000.0
+2024-09-01 15:40:52 - INFO - Saldo simulado disponível: R$0.0
+2024-09-01 15:40:52 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 15:40:52 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:40:53 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:40:53 - INFO - Programa pausado. Pressione SPACE paras sair.
+2024-09-01 15:41:00 - INFO - Programa retomado.
+2024-09-01 15:41:09 - INFO - Preço simulado do BTCBRL: R$387000.0
+2024-09-01 15:41:09 - INFO - Saldo simulado disponível: R$0.0
+2024-09-01 15:41:09 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 15:41:09 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:41:12 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:41:12 - INFO - Programa pausado. Pressione Q paras sair.
+2024-09-01 15:41:36 - INFO - Programa retomado.
+2024-09-01 15:41:38 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:41:38 - INFO - Programa pausado. Pressione Q paras sair.
+2024-09-01 15:42:02 - INFO - Preço simulado do BTCBRL: R$387000.0
+2024-09-01 15:42:02 - INFO - Saldo simulado disponível: R$0.0
+2024-09-01 15:42:02 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 15:42:02 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:42:04 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:42:04 - INFO - Programa pausado. Pressione Q paras sair.
+2024-09-01 15:42:11 - INFO - Programa retomado.
+2024-09-01 15:42:14 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:42:14 - INFO - Programa pausado. Pressione Q paras sair.
+2024-09-01 15:42:17 - INFO - Programa retomado.
+2024-09-01 15:42:19 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:42:19 - INFO - Programa pausado. Pressione Q paras sair.
+2024-09-01 15:43:10 - INFO - Preço simulado do BTCBRL: R$387000.0
+2024-09-01 15:43:10 - INFO - Saldo simulado disponível: R$0.0
+2024-09-01 15:43:10 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 15:43:10 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:43:12 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:43:12 - INFO - Programa pausado. Pressione Q paras sair.
+2024-09-01 15:43:12 - INFO - Programa retomado.
+2024-09-01 15:43:17 - INFO - Programa retomado.
+2024-09-01 15:43:22 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:43:22 - INFO - Programa pausado. Pressione Q paras sair.
+2024-09-01 15:43:22 - INFO - Programa retomado.
+2024-09-01 15:43:26 - INFO - Preço simulado do BTCBRL: R$387000.0
+2024-09-01 15:43:26 - INFO - Saldo simulado disponível: R$0.0
+2024-09-01 15:43:26 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 15:43:26 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:43:36 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:43:36 - INFO - Programa pausado. Pressione Q paras sair.
+2024-09-01 15:43:36 - INFO - Programa retomado.
+2024-09-01 15:45:06 - INFO - Preço simulado do BTCBRL: R$387000.0
+2024-09-01 15:45:06 - INFO - Saldo simulado disponível: R$0.0
+2024-09-01 15:45:06 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 15:45:06 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:45:08 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:45:08 - INFO - Programa pausado. Pressione Q paras sair.
+2024-09-01 15:45:08 - ERROR - Erro inesperado: ("Key 'quit' is not mapped to any known key.", ValueError("Key name 'quit' is not mapped to any known key."))
+2024-09-01 15:45:17 - INFO - Preço simulado do BTCBRL: R$387000.0
+2024-09-01 15:45:17 - INFO - Saldo simulado disponível: R$0.0
+2024-09-01 15:45:17 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 15:45:17 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:45:19 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:45:19 - INFO - Programa pausado. Pressione Q paras sair.
+2024-09-01 15:45:35 - INFO - Preço simulado do BTCBRL: R$387000.0
+2024-09-01 15:45:35 - INFO - Saldo simulado disponível: R$0.0
+2024-09-01 15:45:35 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 15:45:35 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:45:37 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:45:37 - INFO - Programa pausado. Pressione Q paras sair.
+2024-09-01 15:46:05 - INFO - Preço simulado do BTCBRL: R$387000.0
+2024-09-01 15:46:05 - INFO - Saldo simulado disponível: R$0.0
+2024-09-01 15:46:05 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 15:46:05 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:46:06 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:46:06 - INFO - Programa pausado. Pressione Q paras sair.
+2024-09-01 15:46:24 - INFO - Preço simulado do BTCBRL: R$387000.0
+2024-09-01 15:46:24 - INFO - Saldo simulado disponível: R$0.0
+2024-09-01 15:46:24 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 15:46:24 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:46:26 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:46:26 - INFO - Programa pausado. Pressione Q paras sair.
+2024-09-01 15:46:39 - INFO - Preço simulado do BTCBRL: R$387000.0
+2024-09-01 15:46:39 - INFO - Saldo simulado disponível: R$0.0
+2024-09-01 15:46:39 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 15:46:39 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 15:46:43 - INFO - Programa pausado. Pressione ESC novamente para retomar.
+2024-09-01 15:46:43 - INFO - Programa pausado. Pressione Q paras sair.
+2024-09-01 19:36:10 - INFO - Preço simulado do BTCBRL: R$387000.0
+2024-09-01 19:36:10 - INFO - Saldo simulado disponível: R$0.0
+2024-09-01 19:36:10 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 19:36:10 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 19:36:39 - ERROR - Erro inesperado: cannot set using a slice indexer with a different length than the value
+2024-09-01 19:37:39 - ERROR - Erro inesperado: cannot do slice indexing on DatetimeIndex with these indexers [50] of type int
+2024-09-01 19:39:21 - INFO - Preço atual do BTCBRL: R$326164.0
+2024-09-01 19:39:22 - INFO - Saldo disponível: R$0.0
+2024-09-01 19:39:22 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 19:39:22 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 19:41:46 - INFO - Preço atual do BTCBRL: R$326551.0
+2024-09-01 19:41:47 - INFO - Saldo disponível: R$0.0
+2024-09-01 19:41:47 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 19:41:47 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 19:41:50 - INFO - Preço atual do BTCBRL: R$326458.0
+2024-09-01 19:41:50 - INFO - Saldo disponível: R$0.0
+2024-09-01 19:41:50 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 19:41:50 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 19:42:52 - INFO - Preço atual do BTCBRL: R$326050.0
+2024-09-01 19:42:52 - INFO - Saldo disponível: R$0.0
+2024-09-01 19:42:52 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 19:42:52 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 19:43:14 - INFO - Preço atual do BTCBRL: R$326108.0
+2024-09-01 19:43:14 - INFO - Saldo disponível: R$0.0
+2024-09-01 19:43:14 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 19:43:14 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 19:47:33 - INFO - Preço atual do BTCBRL: R$327533.0
+2024-09-01 19:47:33 - INFO - Saldo disponível: R$0.0
+2024-09-01 19:47:33 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 19:47:33 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 19:47:36 - INFO - Preço atual do BTCBRL: R$327533.0
+2024-09-01 19:47:37 - INFO - Saldo disponível: R$0.0
+2024-09-01 19:47:37 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 19:47:37 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 19:48:36 - INFO - Preço atual do BTCBRL: R$328418.0
+2024-09-01 19:48:36 - INFO - Saldo disponível: R$0.0
+2024-09-01 19:48:36 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 19:48:36 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 19:49:06 - INFO - Preço atual do BTCBRL: R$328172.0
+2024-09-01 19:49:06 - INFO - Saldo disponível: R$0.0
+2024-09-01 19:49:06 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 19:49:06 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 19:50:11 - INFO - Preço atual do BTCBRL: R$328049.0
+2024-09-01 19:50:11 - INFO - Saldo disponível: R$0.0
+2024-09-01 19:50:11 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 19:50:11 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 20:09:29 - ERROR - Erro ao obter dados históricos: APIError(code=-1120): Invalid interval.
+2024-09-01 20:09:29 - ERROR - O DataFrame de dados históricos está vazio.
+2024-09-01 20:09:29 - ERROR - O DataFrame está vazio, não é possível plotar a estratégia.
+2024-09-01 20:09:30 - INFO - Preço atual do BTCBRL: R$327742.0
+2024-09-01 20:09:30 - INFO - Saldo disponível: R$0.0
+2024-09-01 20:09:30 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 20:09:30 - INFO - -----------------------------------------------------------------------------------
+2024-09-01 20:10:22 - INFO - Preço atual do BTCBRL: R$326926.0
+2024-09-01 20:10:22 - INFO - Saldo disponível: R$0.0
+2024-09-01 20:10:22 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-01 20:10:22 - INFO - -----------------------------------------------------------------------------------
+2024-09-05 16:58:54 - INFO - Preço atual do BTCBRL: R$314182.0
+2024-09-05 16:58:55 - INFO - Saldo disponível: R$0.0
+2024-09-05 16:58:55 - INFO - Ignorando a compra R$0.0 abaixo do mínimo R$25.0.
+2024-09-05 16:58:55 - INFO - -----------------------------------------------------------------------------------

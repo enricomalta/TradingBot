@@ -1,0 +1,18 @@
+{
+    "API_KEY": "",
+    "API_SECRET": "",
+    "SYMBOL": "BTCBRL",
+    "MOEDA": "BRL",
+    "BUY_MIN": "25",
+    "BUY_PRICE": "327000",
+    "ORDER_MARGIN": "16",
+    "FIBONACCI_LEVELS": [0.236, 0.382, 0.5, 0.618, 0.764],
+    "FIBONACCI_TOLERANCE": "1",
+    "PERCENTAGE_TO_USE": "50",
+    "BALANCE_SAFE": "1000",
+    "TIME_CHECK": "60",
+
+    "SIMULATION_MODE": false,
+    "SIMULATION_BALANCE": "1000",
+    "SIMULATION_PRICE": "380000"
+}
