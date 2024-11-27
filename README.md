@@ -36,7 +36,7 @@ Execute o bot:
 python trading_bot.py
 ```
 
-## 4. Estrutura do json e seu conceitos:
+## 4. Estrutura do json e seus conceitos:
 * API_KEY: Sua API da Binance
 * API_SECRET: Sua API Secrete da Binance
 * SYMBOL: Nome da moeda negociada
