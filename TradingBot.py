@@ -11,7 +11,7 @@ from typing import Dict, Any, Tuple
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import threading
+from multiprocessing import Process, Queue, Event
 
 ###################### HANDLERS ######################
 
@@ -65,6 +65,7 @@ TIME_CHECK = int(config["TIME_CHECK"])
 SIMULATION_MODE = config.get("SIMULATION_MODE", False)  # Modo de simulação
 SIMULATION_BALANCE = float(config["SIMULATION_BALANCE"])
 SIMULATION_PRICE = float(config["SIMULATION_PRICE"])
+TRADE_CRITERIA = config.get("TRADE_CRITERIA", "fibonacci")  # Critério de trade: "fibonacci" ou "support_resistance"
 
 ## CONFIG JSON FILE
 if getattr(sys, 'frozen', False):
@@ -222,17 +223,18 @@ conn, c = initialize_database()
 def get_trading_fees() -> Tuple[float, float]:
     try:
         account_info = client.get_account()
-        maker_fee = float(account_info['makerCommission']) / 100
-        taker_fee = float(account_info['takerCommission']) / 100
-        logger.info(f"Taxas obtidas - Maker: {maker_fee}, Taker: {taker_fee}")
+        # Corrigir as taxas para valores decimais corretos
+        maker_fee = float(account_info['makerCommission']) / 10000  # Dividir por 10000 para obter 0.001 (0,1%)
+        taker_fee = float(account_info['takerCommission']) / 10000  # Dividir por 10000 para obter 0.001 (0,1%)
+        logger.info(f"Taxas obtidas - Maker: {maker_fee * 100}%, Taker: {taker_fee * 100}%")
         return maker_fee, taker_fee
     except BinanceAPIException as e:
         logger.error(f"Erro ao obter taxas de negociação: {e}")
         return 0.0, 0.0
-## HISTORICO 30D
-def get_historical_data(client, symbol, interval='1d', lookback='30 days'):
+## HISTORICO
+def get_historical_data(client, SYMBOL, INTERVAL, LOOKBACK):
     try:
-        df = pd.DataFrame(client.get_historical_klines(symbol, interval, lookback))
+        df = pd.DataFrame(client.get_historical_klines(SYMBOL, INTERVAL, LOOKBACK))
         df.columns = ['timestamp', 'open', 'high', 'low', 'close', 'volume', 'close_time', 
                       'quote_asset_volume', 'number_of_trades', 'taker_buy_base_asset_volume', 
                       'taker_buy_quote_asset_volume', 'ignore']
@@ -244,6 +246,71 @@ def get_historical_data(client, symbol, interval='1d', lookback='30 days'):
     except BinanceAPIException as e:
         logger.error(f"Erro ao obter dados históricos: {e}")
         return pd.DataFrame()  # Retorna um DataFrame vazio em caso de erro
+## CALCULO DO PROFIT
+def calcular_lucro_liquido(preco_compra, preco_venda, quantidade, maker_fee, taker_fee):
+    # Calcula as taxas
+    taxa_compra = preco_compra * quantidade * maker_fee
+    taxa_venda = preco_venda * quantidade * taker_fee
+    taxas_totais = taxa_compra + taxa_venda
+
+    # Calcula o lucro líquido
+    lucro_liquido = (preco_venda * quantidade) - (preco_compra * quantidade) - taxas_totais
+    return lucro_liquido
+## VERIFICA LUCRO
+def verificar_lucro(preco_compra, preco_venda, quantidade):
+    maker_fee, taker_fee = get_trading_fees(client)  # Obtém as taxas da Binance
+    lucro_liquido = calcular_lucro_liquido(preco_compra, preco_venda, quantidade, maker_fee, taker_fee)
+
+    if lucro_liquido > 0:
+        logger.info(f"Lucro líquido esperado: R${lucro_liquido:.2f}. Venda é lucrativa.")
+        return True
+    else:
+        logger.info(f"Lucro líquido esperado: R${lucro_liquido:.2f}. Venda não é lucrativa.")
+        return False
+## Função para exibir e atualizar o gráfico em um processo separado
+def plot_strategy_process(queue, stop_event):
+    plt.ion()  # Ativa o modo interativo
+    fig, ax = plt.subplots(figsize=(12, 8))
+    last_df = None  # Armazena o último DataFrame recebido
+
+    while not stop_event.is_set():  # Verifica se o evento de parada foi acionado
+        try:
+            if not queue.empty():
+                df = queue.get_nowait()  # Obtém o DataFrame atualizado sem bloquear
+                if df is None:  # Sinal para encerrar o processo
+                    break
+                if not df.empty and 'close' in df.columns and 'SMA_50' in df.columns and 'SMA_200' in df.columns:
+                    last_df = df  # Atualiza o último DataFrame válido recebido
+
+            if last_df is not None:  # Se houver dados válidos, atualiza o gráfico
+                ax.clear()  # Limpa o gráfico para atualizar
+                ax.plot(last_df.index, last_df['close'], label='Close Price', alpha=0.5)
+                ax.plot(last_df.index, last_df['SMA_50'], label='SMA 50', alpha=0.75)
+                ax.plot(last_df.index, last_df['SMA_200'], label='SMA 200', alpha=0.75)
+
+                # Adiciona os sinais de compra e venda
+                buy_signals = last_df[last_df['position'] == 1]
+                sell_signals = last_df[last_df['position'] == -1]
+
+                # Plota os sinais de compra
+                ax.plot(buy_signals.index, buy_signals['close'], '^', markersize=10, color='g', lw=0, label='Buy Signal')
+                for idx, row in buy_signals.iterrows():
+                    ax.text(idx, row['close'], f"{row['close']:.2f}", color='green', fontsize=8)
+
+                # Plota os sinais de venda
+                ax.plot(sell_signals.index, sell_signals['close'], 'v', markersize=10, color='r', lw=0, label='Sell Signal')
+                for idx, row in sell_signals.iterrows():
+                    ax.text(idx, row['close'], f"{row['close']:.2f}", color='red', fontsize=8)
+
+                ax.set_title('Trading Strategy')
+                ax.legend()
+                plt.draw()
+                plt.pause(0.5)  # Atualiza o gráfico com menor frequência
+        except Exception as e:
+            logger.error(f"Erro no processo do gráfico: {e}")
+            break
+
+    plt.close(fig)  # Fecha o gráfico ao encerrar o processo
 
 ## ESTRATEGIA
 def strategy(df):
@@ -268,28 +335,9 @@ def strategy(df):
     df['position'] = df['signal'].diff()
     
     return df
-## PLOTAR RESULTADOS
-def plot_strategy(df):
-    if df.empty:
-        logger.error("O DataFrame está vazio, não é possível plotar a estratégia.")
-        return
-
-    plt.figure(figsize=(12,8))
-    plt.plot(df.index, df['close'], label='Close Price', alpha=0.5)
-    plt.plot(df.index, df['SMA_50'], label='SMA 50', alpha=0.75)
-    plt.plot(df.index, df['SMA_200'], label='SMA 200', alpha=0.75)
-    
-    plt.plot(df[df['position'] == 1].index, df['SMA_50'][df['position'] == 1], '^', markersize=10, color='g', lw=0, label='Buy Signal')
-    plt.plot(df[df['position'] == -1].index, df['SMA_50'][df['position'] == -1], 'v', markersize=10, color='r', lw=0, label='Sell Signal')
-    
-    plt.title('Trading Strategy')
-    plt.legend()
-    plt.show()
 
 # Execução das funções
-# df = get_historical_data(client, SYMBOL, INTERVAL, LOOKBACK)
-# df = strategy(df)
-# plot_strategy(df)
+
 ###################### METRICAS TRADING ######################
 
 
@@ -346,14 +394,28 @@ def trade():
             price = SIMULATION_PRICE
             current_price = price
             balance = SIMULATION_BALANCE
-            logger.info(f"Preço simulado do {SYMBOL}: R${current_price}")
-            logger.info(f"Saldo simulado disponível: R${balance}")
+            logger.info(f"Preço simulado do {SYMBOL}: R${current_price:.2f}")
+            logger.info(f"Saldo simulado disponível: R${balance:.2f}")
         else:
             current_price = get_btc_brl_price()
-            logger.info(f"Preço atual do {SYMBOL}: R${current_price}")
+            logger.info(f"Preço atual do {SYMBOL}: R${current_price:.2f}")
             asset_balance = client.get_asset_balance(asset='BRL')
             balance = float(asset_balance['free'])
-            logger.info(f"Saldo disponível: R${balance}")
+            logger.info(f"Saldo disponível: R${balance:.2f}")
+
+        # Obter dados históricos para calcular suporte e resistência
+        df = get_historical_data(client, SYMBOL, INTERVAL, LOOKBACK)
+        if df.empty:
+            logger.error("Não foi possível obter dados históricos para calcular suporte e resistência.")
+            return
+
+        # Calcular suporte e resistência
+        suporte, resistencia = calculate_support_resistance(df['close'].tolist())
+        logger.info(f"Suporte: R${suporte:.2f}, Resistência: R${resistencia:.2f}")
+
+        # Calcular níveis de Fibonacci
+        fibonacci_levels = get_fibonacci_levels(current_price)
+        logger.info(f"Níveis de Fibonacci: {fibonacci_levels}")
 
         # Definir o valor a ser usado na compra
         if balance < BALANCE_SAFE:
@@ -363,40 +425,60 @@ def trade():
 
         # Verificar se o valor a ser usado é suficiente para a compra mínima
         if amount_to_use < BUY_MIN:
-            logger.info(f"Ignorando a compra R${amount_to_use} abaixo do mínimo R${BUY_MIN}.")
+            logger.info(f"Ignorando a compra R${amount_to_use:.2f} abaixo do mínimo R${BUY_MIN:.2f}.")
             logger.info("-----------------------------------------------------------------------------------")
         else:
-            # Calcular a quantidade a ser comprada, o preço alvo e os níveis de Fibonacci
+            # Calcular a quantidade a ser comprada e o preço alvo
             quantity_to_buy = amount_to_use / current_price
             buy_price = current_price
             target_price = buy_price * (1 + ORDER_MARGIN)
-            fibonacci_levels = get_fibonacci_levels(current_price)
 
-            logger.info(f"Valor da compra: R${amount_to_use}")
+            logger.info(f"Valor da compra: R${amount_to_use:.2f}")
             logger.info(f"Quantidade de BTC a ser comprada: {quantity_to_buy}")
-            logger.info(f"Preço alvo calculado: {target_price}")
-            logger.info(f"Níveis de Fibonacci: {fibonacci_levels}")
-            logger.info(f"Comparando preço atual ({current_price}) com nível de Fibonacci mais baixo ({fibonacci_levels[0]})")
-            logger.info(f"Comparando preço atual ({current_price}) com preço da ordem de compra ({BUY_PRICE})")
-            
-            # Verifica se o preço atual atende ao critério de Fibonacci e ao preço da ordem de compra
-            if current_price <= BUY_PRICE and current_price >= fibonacci_levels[0]:
-                logger.info(f"Preço atual ({current_price}) atende ao critério de Fibonacci ({fibonacci_levels[0]}) e está abaixo da ordem de compra ({BUY_PRICE})")
-                logger.info("-----------------------------------------------------------------------------------")
-                if SIMULATION_MODE:
-                    logger.info("Modo de simulação ativado. Comprando Bitcoin...")
-                    insert_order(time.strftime('%Y-%m-%d %H:%M:%S'), quantity_to_buy, buy_price, target_price)
-                    logger.info(f"[SIMULATED BUY] Compra simulada registrada: Quantidade: {quantity_to_buy} BTC a R${buy_price}")
+            logger.info(f"Preço alvo calculado: {target_price:.2f}")
+
+            # Escolher o critério de trade
+            if TRADE_CRITERIA == "fibonacci":
+                logger.info("Usando critério de Fibonacci para trade.")
+                if current_price <= BUY_PRICE and current_price >= fibonacci_levels[0]:
+                    logger.info(f"Preço atual ({current_price:.2f}) atende ao critério de Fibonacci ({fibonacci_levels[0]}).")
                     logger.info("-----------------------------------------------------------------------------------")
+                    if SIMULATION_MODE:
+                        logger.info("Modo de simulação ativado. Comprando Bitcoin...")
+                        insert_order(time.strftime('%Y-%m-%d %H:%M:%S'), quantity_to_buy, buy_price, target_price)
+                        logger.info(f"[SIMULATED BUY] Compra simulada registrada: Quantidade: {quantity_to_buy} BTC a R${buy_price}")
+                        logger.info("-----------------------------------------------------------------------------------")
+                    else:
+                        logger.info("Comprando Bitcoin...")
+                        order = client.order_market_buy(symbol=SYMBOL, quantity=quantity_to_buy)
+                        insert_order(time.strftime('%Y-%m-%d %H:%M:%S'), quantity_to_buy, buy_price, target_price)
+                        logger.info(f"[BUY] Compra realizada: {order}")
+                        logger.info("-----------------------------------------------------------------------------------")
                 else:
-                    logger.info("Comprando Bitcoin...")
-                    order = client.order_market_buy(symbol=SYMBOL, quantity=quantity_to_buy)
-                    insert_order(time.strftime('%Y-%m-%d %H:%M:%S'), quantity_to_buy, buy_price, target_price)
-                    logger.info(f"[BUY] Compra realizada: {order}")
+                    logger.info(f"Preço atual ({current_price:.2f}) não atende aos critérios de Fibonacci.")
+                    logger.info("-----------------------------------------------------------------------------------")
+            elif TRADE_CRITERIA == "support_resistance":
+                logger.info("Usando critério de suporte/resistência para trade.")
+                if current_price <= suporte * (1 + FIBONACCI_TOLERANCE):
+                    logger.info(f"Preço atual ({current_price}) está próximo do suporte ({suporte}).")
+                    logger.info("-----------------------------------------------------------------------------------")
+                    if SIMULATION_MODE:
+                        logger.info("Modo de simulação ativado. Comprando Bitcoin...")
+                        insert_order(time.strftime('%Y-%m-%d %H:%M:%S'), quantity_to_buy, buy_price, resistencia)
+                        logger.info(f"[SIMULATED BUY] Compra simulada registrada: Quantidade: {quantity_to_buy} BTC a R${buy_price:.2f}")
+                        logger.info("-----------------------------------------------------------------------------------")
+                    else:
+                        logger.info("Comprando Bitcoin...")
+                        order = client.order_market_buy(symbol=SYMBOL, quantity=quantity_to_buy)
+                        insert_order(time.strftime('%Y-%m-%d %H:%M:%S'), quantity_to_buy, buy_price, resistencia)
+                        logger.info(f"[BUY] Compra realizada: {order}")
+                        logger.info("-----------------------------------------------------------------------------------")
+                else:
+                    logger.info(f"Preço atual ({current_price}) não está próximo do suporte ({suporte}).")
                     logger.info("-----------------------------------------------------------------------------------")
             else:
-                logger.info(f"Preço atual ({current_price}) não atende aos critérios de Fibonacci ({fibonacci_levels[0]}) e/ou está acima da ordem de compra ({BUY_PRICE})")
-                logger.info("-----------------------------------------------------------------------------------")
+                logger.error(f"Critério de trade inválido: {TRADE_CRITERIA}")
+                return
         
         # Consolidar ordens para venda
         conn = sqlite3.connect('orders.db')
@@ -409,96 +491,100 @@ def trade():
             sell_orders = [order for order in open_orders if current_price >= order[4]]  # Filtra ordens para venda
 
             if sell_orders:
-                order_ids = [order[0] for order in sell_orders]
-                if SIMULATION_MODE:
-                    logger.info("Modo de simulação ativado. Vendendo Bitcoin...")
-                    for order in sell_orders:
-                        order_id = order[0]
-                        #date_buy = order[1]
-                        quantity = order[2]
-                        buy_price = order[3]
-                        target_price = order[4]
-                        value_purchased = order[6]
-                        value_end = current_price * quantity
-                        profit = value_end - value_purchased
-                        logger.info(
-                            f"[SIMULATED SELL] Ordem ID {order_id}: Vendendo {quantity} BTC a {current_price} BRL. "
-                            f"Valor comprado: {value_purchased:.2f} BRL, Valor final: {value_end:.2f} BRL, "
-                            f"Lucro: {profit:.2f} BRL."
-                        )
+                order_ids = []
+                for order in sell_orders:
+                    if verificar_lucro(preco_compra=order[3], preco_venda=current_price, quantidade=order[2]):
+                        logger.info(f"Venda será realizada para a ordem ID {order[0]}, pois é lucrativa.")
+                        if SIMULATION_MODE:
+                            logger.info(f"[SIMULATED SELL] Ordem ID {order[0]}: Vendendo {order[2]} BTC a R${current_price:.2f}.")
+                        else:
+                            client.order_market_sell(symbol=SYMBOL, quantity=order[2])
+                        order_ids.append(order[0])
+                    else:
+                        logger.info(f"Venda não será realizada para a ordem ID {order[0]}, pois não é lucrativa.")
+
+                if order_ids:
                     update_order_status(order_ids, 'closed', current_price)
-                    logger.info("Todas as ordens de venda simuladas foram fechadas.")
-                    logger.info("-----------------------------------------------------------------------------------")
-                else:
-                    logger.info("Vendendo Bitcoin...")
-                    order = client.order_market_sell(symbol=SYMBOL, quantity=total_quantity)
-                    update_order_status(order_ids, 'closed', current_price)
-                    logger.info("[SELL] Venda realizada: %s", order)
-                    for order_id in order_ids:
-                        c.execute('SELECT * FROM orders WHERE id = ?', (order_id,))
-                        updated_order = c.fetchone()
-                        if updated_order:
-                            id = updated_order[0]
-                            #date_buy = updated_order[1]
-                            quantity = updated_order[2]
-                            buy_price = updated_order[3]
-                            target_price = updated_order[4]
-                            sell_price = updated_order[5]
-                            value_purchased = updated_order[6]
-                            value_end = updated_order[7]
-                            profit = updated_order[8]
-                            date_sell = updated_order[9]
-                            status = updated_order[10]
-                            logger.info(
-                                f"[SELL] Ordem ID {id}: Vendido {quantity} BTC a {sell_price} BRL. "
-                                f"Valor comprado: {value_purchased:.2f} BRL, Valor final: {value_end:.2f} BRL, "
-                                f"Lucro: {profit:.2f} BRL. Data de venda: {date_sell}, Status: {status}"
-                            )
-                    logger.info("Todas as ordens de venda foram fechadas.")
+                    logger.info("Ordens lucrativas foram fechadas.")
                     logger.info("-----------------------------------------------------------------------------------")
 
     except BinanceAPIException as e:
         logger.error(f"Erro na API Binance: {e}")
     except Exception as e:
         logger.error(f"Erro inesperado: {e}")
-
 ## VERIFICA SE A TECLA ESC FOI PRESSIONADA E RETORNA O ESTADO
 def check_pause_condition():
     return keyboard.is_pressed('esc')
 ## FUNÇÃO PRINCIPAL
 def main():
+    # Inicializa a fila para comunicação entre processos
+    queue = Queue()
+    stop_event = Event()
+
+    # Inicia o processo do gráfico
+    plot_process = Process(target=plot_strategy_process, args=(queue, stop_event))
+    plot_process.start()
+
     paused = False
     last_run_time = time.time()  # Guarda o tempo da última execução
     first_run = True  # Flag para verificar a primeira execução
-    while True:
-        current_time = time.time()
+    try:    
+        while True:
+            current_time = time.time()
 
-        # Verifica se a tecla ESC foi pressionada
-        if keyboard.is_pressed('esc'):
-            paused = not paused
-            if paused:
-                logger.info("Programa pausado. Pressione ESC novamente para retomar.")
-            else:
-                logger.info("Programa retomado.")
-            time.sleep(1)  # Adiciona um atraso para evitar múltiplas detecções
+            # Verifica se a tecla ESC foi pressionada
+            if keyboard.is_pressed('esc'):
+                paused = not paused
+                if paused:
+                    logger.info("Programa pausado. Pressione ESC novamente para retomar.")
+                else:
+                    logger.info("Programa retomado.")
+                time.sleep(1)  # Adiciona um atraso para evitar múltiplas detecções
 
-        if not paused:
-            # Executa imediatamente na primeira execução
-            if first_run or current_time - last_run_time >= TIME_CHECK:
-                try:
-                    trade()
-                except Exception as e:
-                    logger.error(f"Erro na função trade: {e}")
-                last_run_time = current_time  # Atualiza o tempo da última execução
-                first_run = False  # Define que a execução inicial já ocorreu
+            if not paused:
+                if first_run or current_time - last_run_time >= TIME_CHECK:
+                    try:
+                        # Executa o bot
+                        trade()
+
+                        # Atualiza o DataFrame e envia para o processo do gráfico
+                        df = get_historical_data(client, SYMBOL, INTERVAL, LOOKBACK)
+                        df = strategy(df)
+                        if not df.empty:
+                            if queue.qsize() < 5:  # Limita o tamanho da fila para evitar sobrecarga
+                                queue.put(df)  # Envia o DataFrame atualizado para o gráfico
+                            else:
+                                logger.warning("Fila cheia. Ignorando envio de dados para o gráfico.")
+                        else:
+                            logger.error("DataFrame vazio, não enviado para o gráfico.")
+                    except Exception as e:
+                        logger.error(f"Erro na função trade: {e}")
+                    last_run_time = current_time
+                    first_run = False
+                else:
+                    time.sleep(1)
             else:
-                # Atraso pequeno para não sobrecarregar o processador
                 time.sleep(1)
-        else:
-            # Atraso enquanto está pausado para evitar loop excessivo
-            time.sleep(1)
+    except KeyboardInterrupt:
+        logger.info("Encerrando o programa...")
+    finally:
+        stop_event.set()  # Sinaliza para o processo do gráfico encerrar
+        queue.put(None)  # Envia sinal para encerrar o processo do gráfico
+        plot_process.join()  # Aguarda o término do processo do gráfico
+
 client = initialize_client(API_KEY, API_SECRET)
 conn, c = initialize_database()
+
+## VALIDAÇÃO DE MARGEM DE ORDEM
+maker_fee, taker_fee = get_trading_fees()
+total_fees = maker_fee + taker_fee
+
+
+if ORDER_MARGIN <= total_fees:
+    logger.warning(f"ORDER_MARGIN ({ORDER_MARGIN * 100:.2f}%) é menor ou igual às taxas totais ({total_fees * 100:.4f}%). Ajustando para garantir lucro.")
+    ORDER_MARGIN = total_fees + 0.01  # Adiciona 1% acima das taxas para garantir lucro
+    logger.info(f"ORDER_MARGIN ajustado para: {ORDER_MARGIN * 100:.2f}%")
+
 if __name__ == "__main__":
     try:
         main()
